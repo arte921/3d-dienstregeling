@@ -71,8 +71,10 @@ for (const rit of dienstregeling) {
         alletijdwegen.push({
             vertrektijd: vertrektijd,
             aankomsttijd: aankomsttijd,
-            stations: stations
-        })
+            stations: stations,
+            beginetappe: i == 0,
+            eindetappe: i == rit.length - 2
+        });
 
         i += offset;
     }
