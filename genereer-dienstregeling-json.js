@@ -26,6 +26,7 @@ const dienstregeling = leesIFFSync('timetbls')
 
 
 const alleritjes = [];
+const alletijdwegen = [];
 
 for (const rit of dienstregeling) {
     let i = 0;
@@ -69,6 +70,12 @@ for (const rit of dienstregeling) {
             lijn: lijn
         });
 
+        alletijdwegen.push({
+            vertrektijd: vertrektijd,
+            aankomsttijd: aankomsttijd,
+            stations: stations
+        })
+
         i += offset;
     }
 }
@@ -76,6 +83,7 @@ for (const rit of dienstregeling) {
 console.log(alleritjes.length);
 console.log(dienstregeling.length);
 console.log(alleritjes.length / dienstregeling.length + 1);
-console.log(alleritjes[13]);
+console.log(alletijdwegen[13]);
 
 writeJSONSync(alleritjes, 'alleritjes');
+writeJSONSync(alletijdwegen, 'alletijdwegen');
