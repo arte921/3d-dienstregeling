@@ -8,7 +8,6 @@ const leesIFFSync = require('./functies/leesIFFSync.js');
 const readJSONSync = require('./functies/readJSONSync.js');
 const stationsLijstPolyline = require('./functies/stationsLijstPolyline.js');
 const coordinaatAfstand = require('./functies/coordinaatAfstand.js');
-const polylineAfstand = require('./functies/polylineAfstand.js');
 
 const stations = readJSONSync("stations");
 
@@ -66,7 +65,6 @@ for (const rit of dienstregeling) {
         alleritjes.push({
             vertrektijd: vertrektijd,
             aankomsttijd: aankomsttijd,
-            stations: stations,
             lijn: lijn
         });
 
