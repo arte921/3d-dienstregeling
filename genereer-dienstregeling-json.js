@@ -77,11 +77,11 @@ for (const rit of dienstregeling) {
         i += offset;
     }
 }
-
+/*
 console.log(alleritjes.length);
 console.log(dienstregeling.length);
 console.log(alleritjes.length / dienstregeling.length + 1);
 console.log(alletijdwegen[13]);
-
+*/
 writeJSONSync(alleritjes, 'alleritjes');
 writeJSONSync(alletijdwegen, 'alletijdwegen');
