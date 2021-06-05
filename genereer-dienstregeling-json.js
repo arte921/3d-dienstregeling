@@ -8,6 +8,10 @@ const leesIFFSync = require('./functies/leesIFFSync.js');
 const readJSONSync = require('./functies/readJSONSync.js');
 const stationsLijstPolyline = require('./functies/stationsLijstPolyline.js');
 const coordinaatAfstand = require('./functies/coordinaatAfstand.js');
+const {
+    haalEnkeleRegelOp,
+    tijdNaarMinutenGetal
+} = require('./functies/utility.js');
 
 const stations = readJSONSync("stations");
 
@@ -15,33 +19,43 @@ const stationscodelijst = stations.map((station) => station.code);
 
 const config = readJSONSync('config');
 
+const begintijdgetal = tijdNaarMinutenGetal(config.begintijd);
+const eindtijdgetal = tijdNaarMinutenGetal(config.eindtijd);
+
 const dienstregeling = leesIFFSync('timetbls')
     .split("#")
     .map((entry) => "#" + entry)
     .slice(1)
     .filter((rit) => rijdtOpDag(rit, config.dag))
-    .map(ritStationsVolledig)
-    .filter((rit) => rit.every((stop) => stationscodelijst.includes(stop.station)));
+    // .filter((rit) => ["IC"].includes(haalEnkeleRegelOp(rit, "&")[0]))
+    // .map(ritStationsVolledig)
+    // .filter((rit) => rit.every((stop) => stationscodelijst.includes(stop.station)))
+    // .filter((rit) => rit[0].vertrektijd >= begintijdgetal && rit[rit.length - 1].aankomsttijd <= eindtijdgetal);
 
 
 const alleritjes = [];
 const alletijdwegen = [];
 
 for (const rit of dienstregeling) {
+    const stops = ritStationsVolledig(rit);
+
+    const ritnummer = haalEnkeleRegelOp(rit, "%")[1];
+    console.log(ritnummer);
+
     let i = 0;
-    while (i + 1 < rit.length) {
+    while (i + 1 < stops.length) {
         let offset = 1;
-        while (!rit[i + offset].stopt) {
+        while (!stops[i + offset].stopt) {
             offset++;
         }
 
-        const vertrektijd = rit[i].vertrektijd;
-        const aankomsttijd = rit[i + offset].aankomsttijd;
+        const vertrektijd = stops[i].vertrektijd;
+        const aankomsttijd = stops[i + offset].aankomsttijd;
 
-        const stations = [...rit]
+        const stations = [...stops]
             .slice(i, i + offset + 1)
             .map((stop) => stop.station);
-        
+
         const polyline = stationsLijstPolyline(stations);
 
         let hoogte = 0;
@@ -65,7 +79,8 @@ for (const rit of dienstregeling) {
         alleritjes.push({
             vertrektijd: vertrektijd,
             aankomsttijd: aankomsttijd,
-            lijn: lijn
+            lijn: [lijn[0], lijn[lijn.length - 1]]
+            // lijn: lijn
         });
 
         alletijdwegen.push({
@@ -73,7 +88,7 @@ for (const rit of dienstregeling) {
             aankomsttijd: aankomsttijd,
             stations: stations,
             beginetappe: i == 0,
-            eindetappe: i == rit.length - 2
+            eindetappe: i == stops.length - 2
         });
 
         i += offset;
